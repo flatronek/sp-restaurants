@@ -3,6 +3,8 @@ package com.example.djs.restaurantstracker.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -13,16 +15,20 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.djs.restaurantstracker.R;
+import com.example.djs.restaurantstracker.fragments.RestaurantListFragment;
 import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.squareup.picasso.Picasso;
 
 import java.util.Arrays;
 
@@ -44,8 +50,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     TextView drawerFirstName;
     TextView drawerLastName;
+    ImageView drawerPicture;
 
     private CallbackManager callbackManager;
+    private AccessTokenTracker accessTokenTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +73,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         initFacebookLogin();
+
+        showRestaurantListFragment();
     }
 
     private void initDrawerViews() {
@@ -72,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         drawerFirstName = (TextView) headerView.findViewById(R.id.drawer_header_firstname);
         drawerLastName = (TextView) headerView.findViewById(R.id.drawer_header_lastname);
+        drawerPicture = (ImageView) headerView.findViewById(R.id.drawer_header_image);
     }
 
     @Override
@@ -94,21 +105,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camara) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        if (id == R.id.nav_restaurants) {
+            showRestaurantListFragment();
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -119,22 +119,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        accessTokenTracker.stopTracking();
+    }
+
     private void initFacebookLogin() {
         callbackManager = CallbackManager.Factory.create();
+        accessTokenTracker = new AccessTokenTracker() {
+            @Override
+            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
+                switchDrawerViewType(currentAccessToken != null);
+            }
+        };
+        accessTokenTracker.startTracking();
 
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
         LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                Profile profile = Profile.getCurrentProfile();
                 AccessToken token = AccessToken.getCurrentAccessToken();
-
                 Log.d(TAG, "facebook login success, token: " + token.getToken() + ", uid: " + token.getUserId());
-                Log.d(TAG, "facebook login success, id: " + profile.getId() + ", name: " + profile.getFirstName() +
-                        ", surname: " + profile.getLastName());
-
-                drawerFirstName.setText(profile.getFirstName());
-                drawerLastName.setText(profile.getLastName());
+//                switchDrawerViewType(true);
             }
 
             @Override
@@ -147,5 +154,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Log.d(TAG, "facebook login error: " + error.getMessage());
             }
         });
+
+    }
+
+    private void switchDrawerViewType(boolean isLoggedIn) {
+        if (isLoggedIn) {
+            Profile profile = Profile.getCurrentProfile();
+
+            Log.d(TAG, "facebook login success, id: " + profile.getId() + ", name: " + profile.getFirstName() +
+                    ", surname: " + profile.getLastName());
+
+            drawerFirstName.setText(profile.getFirstName());
+            drawerLastName.setText(profile.getLastName());
+            drawerPicture.setVisibility(View.VISIBLE);
+            Picasso.with(MainActivity.this)
+                    .load(profile.getProfilePictureUri(512, 512))
+                    .placeholder(R.drawable.com_facebook_profile_picture_blank_portrait)
+                    .error(R.drawable.com_facebook_profile_picture_blank_portrait)
+                    .resize(128, 128)
+                    .into(drawerPicture);
+        } else {
+            drawerPicture.setVisibility(View.GONE);
+            drawerLastName.setText("");
+            drawerFirstName.setText("Please log in!");
+        }
+    }
+
+    private void showRestaurantListFragment() {
+        RestaurantListFragment fragment = new RestaurantListFragment();
+
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        transaction.replace(R.id.content_frame, fragment);
+        transaction.commit();
     }
 }
