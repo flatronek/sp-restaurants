@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:minHeight="76dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp" >
+
+    <ImageView
+        android:id="@+id/restaurant_icon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="6dip"
+        android:contentDescription="TODO"
+        android:src="@drawable/ic_corp_icon" />
+
+    <LinearLayout
+        android:layout_toRightOf="@id/restaurant_icon"
+        android:id="@+id/restaurant_info_layout"
+        android:paddingLeft="8dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/restaurant_title"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignWithParentIfMissing="true"
+            android:gravity="center_vertical"
+            android:text="Mleko łaciate"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_marginTop="4dp"
+            android:id="@+id/restaurant_description"
+            android:layout_width="fill_parent"
+            android:layout_height="26dip"
+            android:ellipsize="marquee"
+            android:singleLine="true"
+            android:text="Mleko UHT 2.0% tłuszczu"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+</RelativeLayout>
