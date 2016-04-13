@@ -3,6 +3,7 @@ package com.example.djs.restaurantstracker.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -19,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.djs.restaurantstracker.R;
+import com.example.djs.restaurantstracker.fragments.RateFragment;
 import com.example.djs.restaurantstracker.fragments.RestaurantListFragment;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
@@ -38,6 +40,9 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "MainActivity";
+
+    private static final int RESTAURANTS_FRAGMENT_ID = 0;
+    private static final int RATE_FRAGMENT_ID = 1;
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
@@ -74,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         initFacebookLogin();
 
-        showRestaurantListFragment();
+        switchToFragment(RESTAURANTS_FRAGMENT_ID, null);
     }
 
     private void initDrawerViews() {
@@ -106,7 +111,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.nav_restaurants) {
-            showRestaurantListFragment();
+            switchToFragment(RESTAURANTS_FRAGMENT_ID, null);
+        } else if (id == R.id.nav_grades) {
+            switchToFragment(RATE_FRAGMENT_ID, null);
         }
 
         drawer.closeDrawer(GravityCompat.START);
@@ -180,8 +187,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private void showRestaurantListFragment() {
-        RestaurantListFragment fragment = new RestaurantListFragment();
+    private void switchToFragment(int id, Bundle bundle) {
+        Fragment fragment;
+        switch (id) {
+            case RESTAURANTS_FRAGMENT_ID:
+                fragment = new RestaurantListFragment();
+                break;
+            case RATE_FRAGMENT_ID:
+                fragment = new RateFragment();
+                break;
+            default:
+                return;
+        }
+        fragment.setArguments(bundle);
 
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
