@@ -1,0 +1,29 @@
+{
+	"restaurants": [
+		{
+		  "id": 1,
+		  "name": "Ojczysta czysta",
+		  "address": "Rynek glowny",
+		  "shortDesc": "Dobra i niedroga wodeczka, calkiem przytulnie",
+		  "lat": 50.062387,
+		  "lng": 19.937808
+		},
+		{
+		  "id": 2,
+		  "name": "Ojczysta czysta",
+		  "address": "Rynek glowny",
+		  "shortDesc": "Dobra i niedroga wodeczka, calkiem przytulnie",
+		  "lat": 50.092387,
+		  "lng": 19.937808
+		},
+		{
+		  "id": 3,
+		  "name": "Ojczysta czysta",
+		  "address": "Rynek glowny",
+		  "shortDesc": "Dobra i niedroga wodeczka, calkiem przytulnie",
+		  "lat": 50.062387,
+		  "lng": 19.967808
+		}
+	]
+
+}
