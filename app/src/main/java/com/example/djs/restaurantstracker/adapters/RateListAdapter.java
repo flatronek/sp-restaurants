@@ -52,20 +52,23 @@ public class RateListAdapter extends RecyclerView.Adapter<RateListAdapter.ViewHo
                 fragment.rateRestaurant(restaurant, restaurant.getRate(), holder.commentText.getText().toString());
             }
         });
-
         colorStars(holder, restaurant.getRate());
 
         // prevent rating again
-        if (restaurant.getRate() != 0) {
-            return;
+        if (restaurant.getRate() == 0) {
+            setStarsClickListener(holder, restaurant);
         }
+    }
 
+    private void setStarsClickListener(final ViewHolder holder, final Restaurant restaurant) {
         for (ImageView star : holder.stars) {
             star.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    restaurant.setRate(holder.stars.indexOf(v) + 1);
-                    colorStars(holder, restaurant.getRate());
+                    int rate = holder.stars.indexOf(v) + 1;
+
+                    restaurant.setRate(rate);
+                    colorStars(holder, rate);
 
                     switchViewType(holder);
                 }

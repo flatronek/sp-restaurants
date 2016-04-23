@@ -82,7 +82,9 @@
         android:layout_below="@id/rate_main_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:visibility="gone"
+        tools:visibility="visible">
 
         <EditText
             android:id="@+id/rate_comment_text"
