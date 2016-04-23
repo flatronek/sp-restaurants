@@ -22,7 +22,7 @@ public class SimpleRestAdapter {
 
         restAdapter = new RestAdapter.Builder()
                 .setEndpoint(RestaurantAPI.ENDPOINT)
-                .setRequestInterceptor(createRequestInterceptor())
+//                .setRequestInterceptor(createRequestInterceptor())
                 .setConverter(new GsonConverter(gson))
                 .build();
     }

@@ -4,6 +4,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,6 +23,8 @@ import butterknife.ButterKnife;
  * Created by Sebo on 2016-04-13.
  */
 public class RateListAdapter extends RecyclerView.Adapter<RateListAdapter.ViewHolder> {
+
+    private static final String TAG = RateListAdapter.class.getSimpleName();
 
     private List<Restaurant> restaurants;
     private RateFragment fragment;
@@ -41,23 +45,42 @@ public class RateListAdapter extends RecyclerView.Adapter<RateListAdapter.ViewHo
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final Restaurant restaurant = restaurants.get(position);
         holder.restaurantTitle.setText(restaurant.getName());
+        holder.rateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchViewType(holder);
+                fragment.rateRestaurant(restaurant, restaurant.getRate(), holder.commentText.getText().toString());
+            }
+        });
+
+        colorStars(holder, restaurant.getRate());
+
+        // prevent rating again
+        if (restaurant.getRate() != 0) {
+            return;
+        }
 
         for (ImageView star : holder.stars) {
             star.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int rating = holder.stars.indexOf(v) + 1;
-                    colorStars(holder, rating);
-                    fragment.rateRestaurant(restaurant, rating);
+//                    restaurant.setRate(holder.stars.indexOf(v) + 1);
+                    colorStars(holder, restaurant.getRate());
+
+                    switchViewType(holder);
                 }
             });
         }
     }
 
     private void colorStars(ViewHolder holder, int rating) {
-        for (int i = 0; i < rating; i++) {
-            holder.stars.get(i).setImageResource(R.drawable.star);
+        for (int i = 0; i < holder.stars.size(); i++) {
+            holder.stars.get(i).setImageResource((i < rating) ? R.drawable.star : R.drawable.star_outline);
         }
+    }
+
+    private void switchViewType(ViewHolder holder) {
+        holder.expandedLayout.setVisibility((holder.expandedLayout.getVisibility() == View.VISIBLE) ? View.GONE : View.VISIBLE);
     }
 
     @Override
@@ -67,11 +90,20 @@ public class RateListAdapter extends RecyclerView.Adapter<RateListAdapter.ViewHo
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
+        @Bind(R.id.rate_expanded_layout)
+        View expandedLayout;
+
         @Bind(R.id.rate_list_restaurant_title)
         TextView restaurantTitle;
 
         @Bind(R.id.rate_list_restaurant_image)
         ImageView restaurantImage;
+
+        @Bind(R.id.rate_button)
+        Button rateButton;
+
+        @Bind(R.id.rate_comment_text)
+        EditText commentText;
 
         List<ImageView> stars;
 

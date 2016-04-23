@@ -16,12 +16,16 @@ public class Restaurant {
     @SerializedName("locationY")
     private double lng;
 
+    private int rate;
+
     public Restaurant(int id, String name, String shortDesc, double lat, double lng) {
         this.id = id;
         this.name = name;
         this.description = shortDesc;
         this.lat = lat;
         this.lng = lng;
+
+        this.rate = 0;
     }
 
     public int getId() {
@@ -42,5 +46,13 @@ public class Restaurant {
 
     public double getLng() {
         return lng;
+    }
+
+    public int getRate() {
+        return rate;
+    }
+
+    public void setRate(int rate) {
+        this.rate = rate;
     }
 }

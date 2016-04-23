@@ -1,6 +1,8 @@
 package com.example.djs.restaurantstracker.fragments;
 
 
+import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.djs.restaurantstracker.R;
 import com.example.djs.restaurantstracker.adapters.RateListAdapter;
@@ -18,12 +21,18 @@ import com.example.djs.restaurantstracker.adapters.RestaurantsListAdapter;
 import com.example.djs.restaurantstracker.objects.Restaurant;
 import com.example.djs.restaurantstracker.rest.RestaurantAPI;
 import com.example.djs.restaurantstracker.rest.SimpleRestAdapter;
+import com.facebook.AccessToken;
+import com.facebook.login.DeviceAuthDialog;
+import com.facebook.login.LoginManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+import retrofit.mime.TypedByteArray;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 import rx.functions.Action1;
@@ -56,6 +65,8 @@ public class RateFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_rate, container, false);
         ButterKnife.bind(this, v);
 
+        initRestaurantsView();
+
         return v;
     }
 
@@ -66,8 +77,42 @@ public class RateFragment extends Fragment {
         downloadRestaurantsList();
     }
 
-    public void rateRestaurant(Restaurant restaurant, int rate) {
-        Log.d(TAG, "rateRestaurant() called with: " + "restaurant = [" + restaurant + "], rate = [" + rate + "]");
+    public void rateRestaurant(final Restaurant restaurant, final int rating, final String comment) {
+        Log.d(TAG, "rateRestaurant() called with: " + "restaurant = [" + restaurant.getName() + "], rate = [" + rating + "]");
+        final SimpleRestAdapter adapter = new SimpleRestAdapter();
+        RestaurantAPI restaurantAPI = adapter.getRestAdapter().create(RestaurantAPI.class);
+
+        restaurantAPI.rateRestaurant(AccessToken.getCurrentAccessToken().getToken(), restaurant.getId(),
+                rating, (!comment.isEmpty()) ? comment : null)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnTerminate(new Action0() {
+                    @Override
+                    public void call() {
+                        rateListAdapter.notifyDataSetChanged();
+                    }
+                })
+                .subscribe(new Action1<Response>() {
+                    @Override
+                    public void call(Response response) {
+                        String body = new String(((TypedByteArray) response.getBody()).getBytes());
+                        Log.d(TAG, "sendRateRequest completed: " + body);
+
+                        restaurant.setRate(rating);
+                        Toast.makeText(getContext(), "Thank you for rating!", Toast.LENGTH_SHORT).show();
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        Log.d(TAG, "sendRateRequest error: " + throwable.getMessage());
+                        if (throwable instanceof RetrofitError) {
+                            RetrofitError error = (RetrofitError) throwable;
+                            Log.d(TAG, "sendRateRequest error: " + error.getUrl());
+                        }
+
+                        restaurant.setRate(0);
+                        Toast.makeText(getContext(), "An error has occured, your rating has not been saved.", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void downloadRestaurantsList() {
