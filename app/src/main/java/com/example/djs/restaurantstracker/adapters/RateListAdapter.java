@@ -44,19 +44,23 @@ public class RateListAdapter extends RecyclerView.Adapter<RateListAdapter.ViewHo
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final Restaurant restaurant = restaurants.get(position);
+
+        holder.rating = 0;
         holder.restaurantTitle.setText(restaurant.getName());
+        holder.expandedLayout.setVisibility(View.GONE);
         holder.rateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 switchViewType(holder);
-                fragment.rateRestaurant(restaurant, restaurant.getRate(), holder.commentText.getText().toString());
+                fragment.rateRestaurant(restaurant, holder.rating, holder.commentText.getText().toString());
             }
         });
-        colorStars(holder, restaurant.getRate());
+        setStarsClickListener(holder, restaurant);
 
-        // prevent rating again
-        if (restaurant.getRate() == 0) {
-            setStarsClickListener(holder, restaurant);
+        if (restaurant.getUserRate() == null) {
+            colorStars(holder, holder.rating);
+        } else {
+            colorStars(holder, restaurant.getUserRate() / 2);
         }
     }
 
@@ -65,18 +69,18 @@ public class RateListAdapter extends RecyclerView.Adapter<RateListAdapter.ViewHo
             star.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int rate = holder.stars.indexOf(v) + 1;
+                    if (restaurant.getUserRate() == null) {
+                        holder.rating = holder.stars.indexOf(v) + 1;
+                        colorStars(holder, holder.rating);
 
-                    restaurant.setRate(rate);
-                    colorStars(holder, rate);
-
-                    switchViewType(holder);
+                        switchViewType(holder);
+                    }
                 }
             });
         }
     }
 
-    private void colorStars(ViewHolder holder, int rating) {
+    private void colorStars(ViewHolder holder, double rating) {
         for (int i = 0; i < holder.stars.size(); i++) {
             holder.stars.get(i).setImageResource((i < rating) ? R.drawable.star : R.drawable.star_outline);
         }
@@ -109,6 +113,8 @@ public class RateListAdapter extends RecyclerView.Adapter<RateListAdapter.ViewHo
         EditText commentText;
 
         List<ImageView> stars;
+
+        double rating;
 
         public ViewHolder(View itemView) {
             super(itemView);

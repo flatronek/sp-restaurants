@@ -7,25 +7,43 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Restaurant {
 
-    @SerializedName("restaurantId")
+    @SerializedName("restaurantID")
     private int id;
     private String name;
     private String description;
-    @SerializedName("locationX")
+    private String address;
+    @SerializedName("link")
+    private String url;
+    @SerializedName("latitude")
     private double lat;
-    @SerializedName("locationY")
+    @SerializedName("longitude")
     private double lng;
+    @SerializedName("rate")
+    private double overallRate;
+    @SerializedName("userRate")
+    private Double userRate;
 
-    private int rate;
-
-    public Restaurant(int id, String name, String shortDesc, double lat, double lng) {
+    public Restaurant(int id, String name, String description, String address, String url, double lat, double lng, double overallRate) {
         this.id = id;
         this.name = name;
-        this.description = shortDesc;
+        this.description = description;
+        this.address = address;
+        this.url = url;
         this.lat = lat;
         this.lng = lng;
+        this.overallRate = overallRate;
+    }
 
-        this.rate = 0;
+    public Restaurant(int id, String name, String description, String address, String url, double lat, double lng, double overallRate, double userRate) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.address = address;
+        this.url = url;
+        this.lat = lat;
+        this.lng = lng;
+        this.overallRate = overallRate;
+        this.userRate = userRate;
     }
 
     public int getId() {
@@ -48,11 +66,19 @@ public class Restaurant {
         return lng;
     }
 
-    public int getRate() {
-        return rate;
+    public double getOverallRate() {
+        return overallRate;
     }
 
-    public void setRate(int rate) {
-        this.rate = rate;
+    public void setOverallRate(double overallRate) {
+        this.overallRate = overallRate;
+    }
+
+    public Double getUserRate() {
+        return userRate;
+    }
+
+    public void setUserRate(Double userRate) {
+        this.userRate = userRate;
     }
 }

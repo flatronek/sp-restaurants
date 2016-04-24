@@ -1,8 +1,6 @@
 package com.example.djs.restaurantstracker.fragments;
 
 
-import android.app.DialogFragment;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,13 +15,10 @@ import android.widget.Toast;
 
 import com.example.djs.restaurantstracker.R;
 import com.example.djs.restaurantstracker.adapters.RateListAdapter;
-import com.example.djs.restaurantstracker.adapters.RestaurantsListAdapter;
 import com.example.djs.restaurantstracker.objects.Restaurant;
 import com.example.djs.restaurantstracker.rest.RestaurantAPI;
 import com.example.djs.restaurantstracker.rest.SimpleRestAdapter;
 import com.facebook.AccessToken;
-import com.facebook.login.DeviceAuthDialog;
-import com.facebook.login.LoginManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,13 +72,13 @@ public class RateFragment extends Fragment {
         downloadRestaurantsList();
     }
 
-    public void rateRestaurant(final Restaurant restaurant, final int rating, final String comment) {
+    public void rateRestaurant(final Restaurant restaurant, final double rating, final String comment) {
         Log.d(TAG, "rateRestaurant() called with: " + "restaurant = [" + restaurant.getName() + "], rate = [" + rating + "]");
         final SimpleRestAdapter adapter = new SimpleRestAdapter();
         RestaurantAPI restaurantAPI = adapter.getRestAdapter().create(RestaurantAPI.class);
 
         restaurantAPI.rateRestaurant(AccessToken.getCurrentAccessToken().getToken(), restaurant.getId(),
-                rating, (!comment.isEmpty()) ? comment : null)
+                rating * 2, (!comment.isEmpty()) ? comment : null)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnTerminate(new Action0() {
                     @Override
@@ -97,7 +92,7 @@ public class RateFragment extends Fragment {
                         String body = new String(((TypedByteArray) response.getBody()).getBytes());
                         Log.d(TAG, "sendRateRequest completed: " + body);
 
-                        restaurant.setRate(rating);
+                        restaurant.setUserRate(rating);
                         Toast.makeText(getContext(), "Thank you for rating!", Toast.LENGTH_SHORT).show();
                     }
                 }, new Action1<Throwable>() {
@@ -109,7 +104,6 @@ public class RateFragment extends Fragment {
                             Log.d(TAG, "sendRateRequest error: " + error.getUrl());
                         }
 
-                        restaurant.setRate(0);
                         Toast.makeText(getContext(), "An error has occured, your rating has not been saved.", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -122,7 +116,7 @@ public class RateFragment extends Fragment {
         SimpleRestAdapter restAdapter = new SimpleRestAdapter();
         RestaurantAPI restaurantAPI = restAdapter.getRestAdapter().create(RestaurantAPI.class);
 
-        restaurantAPI.getRestaurants()
+        restaurantAPI.getRestaurants(AccessToken.getCurrentAccessToken().getToken())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnTerminate(new Action0() {
                     @Override
