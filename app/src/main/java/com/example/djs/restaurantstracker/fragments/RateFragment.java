@@ -15,11 +15,15 @@ import android.widget.Toast;
 
 import com.example.djs.restaurantstracker.R;
 import com.example.djs.restaurantstracker.adapters.RateListAdapter;
+import com.example.djs.restaurantstracker.deserializers.RestaurantWithUserRateDeserializer;
 import com.example.djs.restaurantstracker.objects.Restaurant;
 import com.example.djs.restaurantstracker.rest.RestaurantAPI;
 import com.example.djs.restaurantstracker.rest.SimpleRestAdapter;
 import com.facebook.AccessToken;
+import com.facebook.Profile;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,13 +76,13 @@ public class RateFragment extends Fragment {
         downloadRestaurantsList();
     }
 
-    public void rateRestaurant(final Restaurant restaurant, final double rating, final String comment) {
+    public void rateRestaurant(final Restaurant restaurant, final int rating, final String comment) {
         Log.d(TAG, "rateRestaurant() called with: " + "restaurant = [" + restaurant.getName() + "], rate = [" + rating + "]");
         final SimpleRestAdapter adapter = new SimpleRestAdapter();
         RestaurantAPI restaurantAPI = adapter.getRestAdapter().create(RestaurantAPI.class);
 
-        restaurantAPI.rateRestaurant(AccessToken.getCurrentAccessToken().getToken(), restaurant.getId(),
-                rating * 2, (!comment.isEmpty()) ? comment : null)
+        restaurantAPI.rateRestaurant(Profile.getCurrentProfile().getId(), restaurant.getId(),
+                rating, (!comment.isEmpty()) ? comment : null)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnTerminate(new Action0() {
                     @Override
@@ -110,13 +114,16 @@ public class RateFragment extends Fragment {
     }
 
     private void downloadRestaurantsList() {
-        Log.d(TAG, "downloadRestaurantsList: ");
         switchViewType(true);
 
-        SimpleRestAdapter restAdapter = new SimpleRestAdapter();
+        Type collectionType = new TypeToken<List<Restaurant>>() {
+        }.getType();
+
+        SimpleRestAdapter restAdapter = new SimpleRestAdapter(collectionType, new RestaurantWithUserRateDeserializer());
         RestaurantAPI restaurantAPI = restAdapter.getRestAdapter().create(RestaurantAPI.class);
 
-        restaurantAPI.getRestaurants(AccessToken.getCurrentAccessToken().getToken())
+        Log.d(TAG, "downloadRestaurantsList: profileId: " + Profile.getCurrentProfile().getId());
+        restaurantAPI.getRestaurantsWithUserRate(Profile.getCurrentProfile().getId())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnTerminate(new Action0() {
                     @Override
@@ -127,9 +134,9 @@ public class RateFragment extends Fragment {
                 })
                 .subscribe(new Action1<List<Restaurant>>() {
                     @Override
-                    public void call(List<Restaurant> restaurants) {
-                        Log.d(TAG, "restaurants downloaded: " + restaurants.size());
-                        RateFragment.this.restaurants.addAll(restaurants);
+                    public void call(List<Restaurant> restaurantWithUserRates) {
+                        Log.d(TAG, "restaurants downloaded: " + restaurantWithUserRates.size());
+                        RateFragment.this.restaurants.addAll(restaurantWithUserRates);
                     }
                 }, new Action1<Throwable>() {
                     @Override

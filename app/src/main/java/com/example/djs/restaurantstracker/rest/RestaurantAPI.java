@@ -1,10 +1,10 @@
 package com.example.djs.restaurantstracker.rest;
 
 import com.example.djs.restaurantstracker.objects.Restaurant;
+import com.example.djs.restaurantstracker.objects.RestaurantWithUserRate;
 
 import java.util.List;
 
-import butterknife.Bind;
 import retrofit.client.Response;
 import retrofit.http.Body;
 import retrofit.http.GET;
@@ -22,7 +22,7 @@ public interface RestaurantAPI {
     Observable<List<Restaurant>> getRestaurants();
 
     @GET("/restaurantsWithUserRate")
-    Observable<List<Restaurant>> getRestaurants(@Query("userToken") String token);
+    Observable<List<Restaurant>> getRestaurantsWithUserRate(@Query("userToken") String token);
 
     @GET("/restaurants")
     Observable<Restaurant> getRestaurant(@Query("name") String name);

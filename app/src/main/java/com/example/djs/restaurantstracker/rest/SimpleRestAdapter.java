@@ -2,6 +2,9 @@ package com.example.djs.restaurantstracker.rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
+
+import java.lang.reflect.Type;
 
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
@@ -23,6 +26,19 @@ public class SimpleRestAdapter {
         restAdapter = new RestAdapter.Builder()
                 .setEndpoint(RestaurantAPI.ENDPOINT)
 //                .setRequestInterceptor(createRequestInterceptor())
+                .setConverter(new GsonConverter(gson))
+                .build();
+    }
+
+    public SimpleRestAdapter(Type collectionType, JsonDeserializer deserializer) {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+
+        gsonBuilder.registerTypeAdapter(collectionType, deserializer);
+        Gson gson = gsonBuilder.create();
+
+        restAdapter = new RestAdapter.Builder()
+                .setEndpoint(RestaurantAPI.ENDPOINT)
+                .setRequestInterceptor(createRequestInterceptor())
                 .setConverter(new GsonConverter(gson))
                 .build();
     }

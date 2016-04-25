@@ -1,9 +1,12 @@
 package com.example.djs.restaurantstracker.adapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -12,6 +15,7 @@ import android.widget.TextView;
 import com.example.djs.restaurantstracker.R;
 import com.example.djs.restaurantstracker.fragments.RateFragment;
 import com.example.djs.restaurantstracker.objects.Restaurant;
+import com.example.djs.restaurantstracker.objects.RestaurantWithUserRate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +32,7 @@ public class RateListAdapter extends RecyclerView.Adapter<RateListAdapter.ViewHo
 
     private List<Restaurant> restaurants;
     private RateFragment fragment;
+    private Context context;
 
     public RateListAdapter(List<Restaurant> restaurants, RateFragment fragment) {
         this.fragment = fragment;
@@ -37,6 +42,7 @@ public class RateListAdapter extends RecyclerView.Adapter<RateListAdapter.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.rate_restaurant_list_item, parent, false);
+        this.context = parent.getContext();
 
         return new ViewHolder(v);
     }
@@ -51,12 +57,17 @@ public class RateListAdapter extends RecyclerView.Adapter<RateListAdapter.ViewHo
         holder.rateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(holder.mainView.getWindowToken(), 0);
+
                 switchViewType(holder);
-                fragment.rateRestaurant(restaurant, holder.rating, holder.commentText.getText().toString());
+                fragment.rateRestaurant(restaurant, holder.rating * 2, holder.commentText.getText().toString());
             }
         });
         setStarsClickListener(holder, restaurant);
 
+        Log.d(TAG, "onBindViewHolder: restaurant: " + restaurant.getId() + " " + restaurant.getName() + " " + restaurant.getOverallRate() + " " + restaurant.getDescription());
+        Log.d(TAG, "onBindViewHolder: userRate: " + restaurant.getUserRate());
         if (restaurant.getUserRate() == null) {
             colorStars(holder, holder.rating);
         } else {
@@ -114,11 +125,15 @@ public class RateListAdapter extends RecyclerView.Adapter<RateListAdapter.ViewHo
 
         List<ImageView> stars;
 
-        double rating;
+        View mainView;
+
+        int rating;
 
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+            this.mainView = itemView;
 
             stars = new ArrayList<>();
             stars.add((ImageView) itemView.findViewById(R.id.rate_star_1));

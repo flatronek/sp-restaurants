@@ -1,9 +1,12 @@
 package com.example.djs.restaurantstracker.activities;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.example.djs.restaurantstracker.R;
 import com.facebook.AccessToken;
@@ -24,8 +27,13 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = LoginActivity.class.getSimpleName();
 
-    @Bind(R.id.login_button)
+    private static final int SPLASHSCREEN_DELAY = 1000;
+
+    @Bind(R.id.login_activity_login_button)
     LoginButton loginButton;
+
+    @Bind(R.id.login_activity_info_layout)
+    View infoLayout;
 
     private CallbackManager callbackManager;
 
@@ -36,14 +44,22 @@ public class LoginActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
+        initView();
         initFacebookLogin();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     private void initFacebookLogin() {
         callbackManager = CallbackManager.Factory.create();
 
-        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
-        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        loginButton.setReadPermissions("public_profile");
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Profile profile = Profile.getCurrentProfile();
@@ -52,6 +68,8 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d(TAG, "facebook login success, token: " + token.getToken() + ", uid: " + token.getUserId());
                 Log.d(TAG, "facebook login success, id: " + profile.getId() + ", name: " + profile.getFirstName() +
                         ", surname: " + profile.getLastName());
+
+                startMainActivity();
             }
 
             @Override
@@ -66,10 +84,24 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    private void initView() {
+        if (AccessToken.getCurrentAccessToken() != null) {
+            infoLayout.setVisibility(View.GONE);
 
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startMainActivity();
+                }
+            }, SPLASHSCREEN_DELAY);
+        }
+    }
+
+    private void startMainActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+
+        finish();
     }
 }

@@ -18,6 +18,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginLeft="16dp"
+            android:layout_centerVertical="true"
             android:src="@drawable/ic_corp_icon"/>
 
         <LinearLayout
@@ -29,10 +30,14 @@
 
             <TextView
                 android:id="@+id/rate_list_restaurant_title"
-                android:layout_width="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:gravity="center"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 style="@style/listItemTitle"
+                android:textAllCaps="false"
                 tools:text="Restauracja Gora olimp" />
 
             <LinearLayout

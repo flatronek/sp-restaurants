@@ -142,6 +142,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         };
         accessTokenTracker.startTracking();
 
+        Log.d(TAG, "initFacebookLogin: profile: " + Profile.getCurrentProfile());
+
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
         LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -161,7 +163,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Log.d(TAG, "facebook login error: " + error.getMessage());
             }
         });
-
     }
 
     private void switchDrawerViewType(boolean isLoggedIn) {
@@ -174,6 +175,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             drawerFirstName.setText(profile.getFirstName());
             drawerLastName.setText(profile.getLastName());
             drawerPicture.setVisibility(View.VISIBLE);
+
             Picasso.with(MainActivity.this)
                     .load(profile.getProfilePictureUri(512, 512))
                     .placeholder(R.drawable.com_facebook_profile_picture_blank_portrait)
@@ -181,9 +183,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     .resize(128, 128)
                     .into(drawerPicture);
         } else {
-            drawerPicture.setVisibility(View.GONE);
-            drawerLastName.setText("");
-            drawerFirstName.setText("Please log in!");
+            startLoginActivity();
+
+//            drawerPicture.setVisibility(View.GONE);
+//            drawerLastName.setText("");
+//            drawerFirstName.setText("Please log in!");
         }
     }
 
@@ -205,5 +209,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         FragmentTransaction transaction = fm.beginTransaction();
         transaction.replace(R.id.content_frame, fragment);
         transaction.commit();
+    }
+
+    private void startLoginActivity() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+
+        finish();
     }
 }
