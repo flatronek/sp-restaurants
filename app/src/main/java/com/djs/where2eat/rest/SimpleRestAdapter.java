@@ -1,4 +1,4 @@
-package com.example.djs.restaurantstracker.rest;
+package com.djs.where2eat.rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

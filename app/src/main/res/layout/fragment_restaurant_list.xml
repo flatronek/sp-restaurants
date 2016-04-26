@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.djs.restaurantstracker.fragments.RestaurantListFragment">
+    tools:context="com.djs.where2eat.fragments.RestaurantListFragment">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/restaurants_recycler_view"

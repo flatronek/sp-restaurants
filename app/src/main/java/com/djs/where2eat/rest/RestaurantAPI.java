@@ -1,7 +1,7 @@
-package com.example.djs.restaurantstracker.rest;
+package com.djs.where2eat.rest;
 
-import com.example.djs.restaurantstracker.objects.Restaurant;
-import com.example.djs.restaurantstracker.objects.RestaurantWithUserRate;
+
+import com.djs.where2eat.objects.Restaurant;
 
 import java.util.List;
 

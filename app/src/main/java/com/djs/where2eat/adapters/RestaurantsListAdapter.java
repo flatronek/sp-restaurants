@@ -1,4 +1,4 @@
-package com.example.djs.restaurantstracker.adapters;
+package com.djs.where2eat.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.djs.restaurantstracker.R;
-import com.example.djs.restaurantstracker.objects.Restaurant;
+import com.djs.where2eat.R;
+import com.djs.where2eat.objects.Restaurant;
 
 import java.util.List;
 

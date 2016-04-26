@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:text="where2eat\nKrakow"
+                android:text="@string/login_app_title"
                 android:textAlignment="center"
                 android:textSize="36sp"
                 android:textColor="@color/cardview_light_background"/>

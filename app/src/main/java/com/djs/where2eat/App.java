@@ -1,4 +1,4 @@
-package com.example.djs.restaurantstracker;
+package com.djs.where2eat;
 
 import android.app.Application;
 

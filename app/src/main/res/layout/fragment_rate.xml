@@ -2,14 +2,38 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.djs.restaurantstracker.fragments.RateFragment">
+    android:focusableInTouchMode="true"
+    tools:context="com.djs.where2eat.fragments.RateFragment">
+
+    <RelativeLayout
+        android:id="@+id/rate_search_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:gravity="center">
+
+        <android.support.v7.widget.SearchView
+            android:id="@+id/rate_search_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:hint="@string/search_button_text"
+            android:layout_centerVertical="true"
+            android:textSize="18sp"/>
+
+    </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rate_restaurants_recycler_view"
+        android:layout_below="@id/rate_search_layout"
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:focusableInTouchMode="true"
+        android:focusable="true"/>
 
     <ProgressBar
         android:id="@+id/rate_restaurants_progress_bar"
