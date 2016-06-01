@@ -1,5 +1,6 @@
 package com.djs.where2eat.fragments;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,17 +14,14 @@ import android.widget.ProgressBar;
 import com.djs.where2eat.R;
 import com.djs.where2eat.adapters.RestaurantsListAdapter;
 import com.djs.where2eat.objects.Restaurant;
-import com.djs.where2eat.rest.RestaurantAPI;
-import com.djs.where2eat.rest.SimpleRestAdapter;
+import com.djs.where2eat.objects.realm.RealmRestaurant;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action0;
-import rx.functions.Action1;
+import io.realm.Realm;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -38,7 +36,7 @@ public class RestaurantListFragment extends Fragment {
     @Bind(R.id.restaurants_recycler_view)
     RecyclerView restaurantsRecyclerView;
 
-    private List<Restaurant> restaurants;
+    private List<RealmRestaurant> restaurants;
     private RestaurantsListAdapter restaurantsListAdapter;
 
     public RestaurantListFragment() {
@@ -52,16 +50,10 @@ public class RestaurantListFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_restaurant_list, container, false);
         ButterKnife.bind(this, v);
 
+        initRestaurantsList();
         initRestaurantsView();
 
         return v;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        downloadRestaurantsList();
     }
 
     private void initRestaurantsView() {
@@ -85,30 +77,11 @@ public class RestaurantListFragment extends Fragment {
         }
     }
 
-    private void downloadRestaurantsList() {
-        switchViewType(true);
+    private void initRestaurantsList() {
+        Realm realm = Realm.getDefaultInstance();
 
-        SimpleRestAdapter restAdapter = new SimpleRestAdapter();
-        RestaurantAPI restaurantAPI = restAdapter.getRestAdapter().create(RestaurantAPI.class);
+        restaurants = realm.copyFromRealm(realm.where(RealmRestaurant.class).findAll());
 
-        restaurantAPI.getRestaurants()
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnTerminate(new Action0() {
-                    @Override
-                    public void call() {
-                        switchViewType(false);
-                        restaurantsListAdapter.notifyDataSetChanged();
-                    }
-                })
-                .subscribe(new Action1<List<Restaurant>>() {
-                    @Override
-                    public void call(List<Restaurant> restaurants) {
-                        RestaurantListFragment.this.restaurants.addAll(restaurants);
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                    }
-                });
+        realm.close();
     }
 }

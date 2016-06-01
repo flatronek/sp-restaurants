@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.djs.where2eat.R;
 import com.djs.where2eat.fragments.RateFragment;
 import com.djs.where2eat.objects.Restaurant;
+import com.djs.where2eat.objects.realm.RealmRestaurant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,11 +29,11 @@ public class RateListAdapter extends RecyclerView.Adapter<RateListAdapter.ViewHo
 
     private static final String TAG = RateListAdapter.class.getSimpleName();
 
-    private List<Restaurant> restaurants;
+    private List<RealmRestaurant> restaurants;
     private RateFragment fragment;
     private Context context;
 
-    public RateListAdapter(List<Restaurant> restaurants, RateFragment fragment) {
+    public RateListAdapter(List<RealmRestaurant> restaurants, RateFragment fragment) {
         this.fragment = fragment;
         this.restaurants = restaurants;
     }
@@ -47,11 +48,19 @@ public class RateListAdapter extends RecyclerView.Adapter<RateListAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        final Restaurant restaurant = restaurants.get(position);
+        final RealmRestaurant restaurant = restaurants.get(position);
 
         holder.rating = 0;
-        holder.restaurantTitle.setText(restaurant.getName());
         holder.expandedLayout.setVisibility(View.GONE);
+
+        holder.restaurantTitle.setText(restaurant.getName());
+        holder.restaurantTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchViewType(holder);
+            }
+        });
+
         holder.rateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,7 +80,7 @@ public class RateListAdapter extends RecyclerView.Adapter<RateListAdapter.ViewHo
         }
     }
 
-    private void setStarsClickListener(final ViewHolder holder, final Restaurant restaurant) {
+    private void setStarsClickListener(final ViewHolder holder, final RealmRestaurant restaurant) {
         for (ImageView star : holder.stars) {
             star.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -80,7 +89,9 @@ public class RateListAdapter extends RecyclerView.Adapter<RateListAdapter.ViewHo
                         holder.rating = holder.stars.indexOf(v) + 1;
                         colorStars(holder, holder.rating);
 
-                        switchViewType(holder);
+                        if (holder.expandedLayout.getVisibility() == View.GONE) {
+                            switchViewType(holder);
+                        }
                     }
                 }
             });
@@ -97,7 +108,7 @@ public class RateListAdapter extends RecyclerView.Adapter<RateListAdapter.ViewHo
         holder.expandedLayout.setVisibility((holder.expandedLayout.getVisibility() == View.VISIBLE) ? View.GONE : View.VISIBLE);
     }
 
-    public void setDataSet(List<Restaurant> restaurants) {
+    public void setDataSet(List<RealmRestaurant> restaurants) {
         this.restaurants = restaurants;
         this.notifyDataSetChanged();
     }

@@ -8,7 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.djs.where2eat.R;
-import com.djs.where2eat.objects.Restaurant;
+import com.djs.where2eat.objects.realm.RealmRestaurant;
 
 import java.util.List;
 
@@ -20,9 +20,9 @@ import butterknife.ButterKnife;
  */
 public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsListAdapter.ViewHolder>  {
 
-    private List<Restaurant> restaurants;
+    private List<RealmRestaurant> restaurants;
 
-    public RestaurantsListAdapter(List<Restaurant> restaurants) {
+    public RestaurantsListAdapter(List<RealmRestaurant> restaurants) {
         this.restaurants = restaurants;
     }
 
@@ -35,7 +35,7 @@ public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsList
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Restaurant restaurant = restaurants.get(position);
+        RealmRestaurant restaurant = restaurants.get(position);
 
         holder.restaurantName.setText(restaurant.getName());
         holder.restaurantDescription.setText(restaurant.getDescription());

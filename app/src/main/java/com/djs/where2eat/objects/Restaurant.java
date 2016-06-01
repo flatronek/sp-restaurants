@@ -35,6 +35,14 @@ public class Restaurant {
         this.userRate = userRate;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
     public int getId() {
         return id;
     }
