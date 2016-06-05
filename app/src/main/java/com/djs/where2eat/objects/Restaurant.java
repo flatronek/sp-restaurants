@@ -1,5 +1,6 @@
 package com.djs.where2eat.objects;
 
+import com.djs.where2eat.objects.realm.RealmRestaurant;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -22,6 +23,18 @@ public class Restaurant {
     private double overallRate;
     @SerializedName("userRate")
     private Integer userRate;
+
+    public Restaurant(RealmRestaurant restaurant) {
+        this.id = restaurant.getId();
+        this.name = restaurant.getName();
+        this.description = restaurant.getDescription();
+        this.address = restaurant.getAddress();
+        this.url = restaurant.getUrl();
+        this.lat = restaurant.getLat();
+        this.lng = restaurant.getLng();
+        this.overallRate = restaurant.getOverallRate();
+        this.userRate = restaurant.getUserRate();
+    }
 
     public Restaurant(int id, String name, String description, String address, String url, double lat, double lng, double overallRate, Integer userRate) {
         this.id = id;
