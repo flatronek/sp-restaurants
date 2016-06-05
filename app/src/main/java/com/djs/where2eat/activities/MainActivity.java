@@ -160,6 +160,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Type collectionType = new TypeToken<List<Restaurant>>() {
         }.getType();
 
+        Log.d(TAG, "downloadRestaurants: user id: " + Profile.getCurrentProfile().getId());
         SimpleRestAdapter restAdapter = new SimpleRestAdapter(collectionType, new RestaurantWithUserRateDeserializer());
         RestaurantAPI restaurantAPI = restAdapter.getRestAdapter().create(RestaurantAPI.class);
 

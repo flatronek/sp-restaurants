@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
+import rx.Observable;
+import rx.Subscriber;
 
 /**
  * Created by Sebo on 2016-06-05.
@@ -17,20 +19,21 @@ public enum RestaurantManager {
 
     private static final String TAG = "RestaurantManager";
 
-    public void getRecommendedRestaurants(RestaurantManagerListener listener) {
-        Realm realm = Realm.getDefaultInstance();
+    public Observable<List<Restaurant>> getRecommendedRestaurantsObservable() {
+        return Observable.create(new Observable.OnSubscribe<List<Restaurant>>() {
+            @Override
+            public void call(Subscriber<? super List<Restaurant>> subscriber) {
+                Realm realm = Realm.getDefaultInstance();
 
-        List<Restaurant> result = new ArrayList<>();
+                List<Restaurant> result = new ArrayList<>();
 
-        for (RealmRestaurant realmRestaurant : realm.where(RealmRestaurant.class).findAll().subList(0, 10)) {
-            result.add(new Restaurant(realmRestaurant));
-        }
+                for (RealmRestaurant realmRestaurant : realm.where(RealmRestaurant.class).findAll().subList(0, 10)) {
+                    result.add(new Restaurant(realmRestaurant));
+                }
 
-        listener.onDownloaded(result);
-    }
-
-    public interface RestaurantManagerListener {
-        void onDownloaded(List<Restaurant> restaurants);
-        void onError(String message);
+                subscriber.onNext(result);
+                subscriber.onCompleted();
+            }
+        });
     }
 }
