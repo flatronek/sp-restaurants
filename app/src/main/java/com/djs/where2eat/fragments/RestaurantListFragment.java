@@ -60,7 +60,7 @@ public class RestaurantListFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        restaurantsListAdapter = new RestaurantsListAdapter(restaurants);
+        restaurantsListAdapter = new RestaurantsListAdapter(restaurants, getContext());
 
         restaurantsRecyclerView.setLayoutManager(layoutManager);
         restaurantsRecyclerView.setAdapter(restaurantsListAdapter);
