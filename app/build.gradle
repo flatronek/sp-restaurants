@@ -34,6 +34,8 @@ dependencies {
     compile 'com.facebook.android:facebook-android-sdk:4.+'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
+    compile 'com.squareup.okhttp3:okhttp:3.3.1'
+    compile 'com.jakewharton.retrofit:retrofit1-okhttp3-client:1.0.2'
     compile 'io.reactivex:rxandroid:1.1.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.android.support:support-v4:23.4.0'

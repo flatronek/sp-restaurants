@@ -1,6 +1,7 @@
 package com.djs.where2eat.rest;
 
 
+import com.djs.where2eat.objects.RecommendedRestaurant;
 import com.djs.where2eat.objects.Restaurant;
 
 import java.util.List;
@@ -30,4 +31,7 @@ public interface RestaurantAPI {
     @POST("/rateRestaurant")
     Observable<Response> rateRestaurant(@Query("userToken") String token, @Query("restaurantID") int restaurantID,
                                         @Query("rate") double rate, @Body String comment);
+
+    @GET("/restaurantsWithRecommendation")
+    Observable<List<RecommendedRestaurant>> getRestaurantsWithRecommendation(@Query("userToken") String token);
 }

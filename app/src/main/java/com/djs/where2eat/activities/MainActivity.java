@@ -24,6 +24,7 @@ import com.djs.where2eat.R;
 import com.djs.where2eat.deserializers.RestaurantWithUserRateDeserializer;
 import com.djs.where2eat.fragments.MapFragment;
 import com.djs.where2eat.fragments.RateFragment;
+import com.djs.where2eat.fragments.RecommendedRestaurantsFragment;
 import com.djs.where2eat.fragments.RestaurantListFragment;
 import com.djs.where2eat.objects.Restaurant;
 import com.djs.where2eat.objects.realm.RealmRestaurant;
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final int RESTAURANTS_FRAGMENT_ID = 0;
     private static final int RATE_FRAGMENT_ID = 1;
     private static final int MAP_FRAGMENT_ID = 2;
+    private static final int RECOMMENDATIONS_FRAGMENT_ID = 3;
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
@@ -137,6 +139,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.nav_grades:
                 switchToFragment(RATE_FRAGMENT_ID, null);
+                break;
+            case R.id.nav_recommendations:
+                switchToFragment(RECOMMENDATIONS_FRAGMENT_ID, null);
                 break;
         }
 
@@ -275,6 +280,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case MAP_FRAGMENT_ID:
                 fragment = new MapFragment();
+                break;
+            case RECOMMENDATIONS_FRAGMENT_ID:
+                fragment = new RecommendedRestaurantsFragment();
                 break;
             default:
                 return;

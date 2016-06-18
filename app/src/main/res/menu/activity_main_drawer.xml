@@ -3,7 +3,9 @@
 
     <group android:checkableBehavior="single">
         <item android:id="@+id/nav_restaurants" android:icon="@android:drawable/ic_menu_camera"
-            android:title="Restaurants" />
+        android:title="Restaurants" />
+        <item android:id="@+id/nav_recommendations" android:icon="@android:drawable/btn_star"
+            android:title="Recommendations" />
         <item android:id="@+id/nav_map" android:icon="@android:drawable/ic_dialog_map"
             android:title="Map" />
         <item android:id="@+id/nav_grades" android:icon="@android:drawable/ic_menu_slideshow"
